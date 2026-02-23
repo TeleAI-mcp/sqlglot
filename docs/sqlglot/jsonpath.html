@@ -372,7 +372,7 @@
                                 <div class="attr variable">
             <span class="name">SINGLE_TOKENS</span>        =
 <input id="JSONPathTokenizer.SINGLE_TOKENS-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-            <label class="view-value-button pdoc-button" for="JSONPathTokenizer.SINGLE_TOKENS-view-value"></label><span class="default_value">{&#39;(&#39;: &lt;TokenType.L_PAREN: &#39;L_PAREN&#39;&gt;, &#39;)&#39;: &lt;TokenType.R_PAREN: &#39;R_PAREN&#39;&gt;, &#39;[&#39;: &lt;TokenType.L_BRACKET: &#39;L_BRACKET&#39;&gt;, &#39;]&#39;: &lt;TokenType.R_BRACKET: &#39;R_BRACKET&#39;&gt;, &#39;:&#39;: &lt;TokenType.COLON: &#39;COLON&#39;&gt;, &#39;,&#39;: &lt;TokenType.COMMA: &#39;COMMA&#39;&gt;, &#39;-&#39;: &lt;TokenType.DASH: &#39;DASH&#39;&gt;, &#39;.&#39;: &lt;TokenType.DOT: &#39;DOT&#39;&gt;, &#39;?&#39;: &lt;TokenType.PLACEHOLDER: &#39;PLACEHOLDER&#39;&gt;, &#39;@&#39;: &lt;TokenType.PARAMETER: &#39;PARAMETER&#39;&gt;, &#34;&#39;&#34;: &lt;TokenType.QUOTE: &#39;QUOTE&#39;&gt;, &#39;&#34;&#39;: &lt;TokenType.QUOTE: &#39;QUOTE&#39;&gt;, &#39;$&#39;: &lt;TokenType.DOLLAR: &#39;DOLLAR&#39;&gt;, &#39;*&#39;: &lt;TokenType.STAR: &#39;STAR&#39;&gt;}</span>
+            <label class="view-value-button pdoc-button" for="JSONPathTokenizer.SINGLE_TOKENS-view-value"></label><span class="default_value">{&#39;(&#39;: &lt;TokenType.L_PAREN: 1&gt;, &#39;)&#39;: &lt;TokenType.R_PAREN: 2&gt;, &#39;[&#39;: &lt;TokenType.L_BRACKET: 3&gt;, &#39;]&#39;: &lt;TokenType.R_BRACKET: 4&gt;, &#39;:&#39;: &lt;TokenType.COLON: 11&gt;, &#39;,&#39;: &lt;TokenType.COMMA: 7&gt;, &#39;-&#39;: &lt;TokenType.DASH: 9&gt;, &#39;.&#39;: &lt;TokenType.DOT: 8&gt;, &#39;?&#39;: &lt;TokenType.PLACEHOLDER: 349&gt;, &#39;@&#39;: &lt;TokenType.PARAMETER: 55&gt;, &#34;&#39;&#34;: &lt;TokenType.QUOTE: 359&gt;, &#39;&#34;&#39;: &lt;TokenType.QUOTE: 359&gt;, &#39;$&#39;: &lt;TokenType.DOLLAR: 54&gt;, &#39;*&#39;: &lt;TokenType.STAR: 19&gt;}</span>
 
         
     </div>
@@ -384,7 +384,7 @@
                             <div id="JSONPathTokenizer.KEYWORDS" class="classattr">
                                 <div class="attr variable">
             <span class="name">KEYWORDS</span>        =
-<span class="default_value">{&#39;..&#39;: &lt;TokenType.DOT: &#39;DOT&#39;&gt;}</span>
+<span class="default_value">{&#39;..&#39;: &lt;TokenType.DOT: 8&gt;}</span>
 
         
     </div>
@@ -420,7 +420,7 @@
                             <div id="JSONPathTokenizer.VAR_TOKENS" class="classattr">
                                 <div class="attr variable">
             <span class="name">VAR_TOKENS</span>        =
-<span class="default_value">{&lt;TokenType.VAR: &#39;VAR&#39;&gt;}</span>
+<span class="default_value">{&lt;TokenType.VAR: 85&gt;}</span>
 
         
     </div>
@@ -431,7 +431,7 @@
                             </div>
                             <div id="JSONPathTokenizer.BYTE_STRING_ESCAPES" class="classattr">
                                 <div class="attr variable">
-            <span class="name">BYTE_STRING_ESCAPES</span><span class="annotation">: List[str]</span>        =
+            <span class="name">BYTE_STRING_ESCAPES</span><span class="annotation">: ClassVar[List[str]]</span>        =
 <span class="default_value">[&#39;\\&#39;]</span>
 
         
@@ -462,18 +462,14 @@
                 <dd id="JSONPathTokenizer.NESTED_COMMENTS" class="variable"><a href="tokens.html#Tokenizer.NESTED_COMMENTS">NESTED_COMMENTS</a></dd>
                 <dd id="JSONPathTokenizer.HINT_START" class="variable"><a href="tokens.html#Tokenizer.HINT_START">HINT_START</a></dd>
                 <dd id="JSONPathTokenizer.TOKENS_PRECEDING_HINT" class="variable"><a href="tokens.html#Tokenizer.TOKENS_PRECEDING_HINT">TOKENS_PRECEDING_HINT</a></dd>
-                <dd id="JSONPathTokenizer.WHITE_SPACE" class="variable"><a href="tokens.html#Tokenizer.WHITE_SPACE">WHITE_SPACE</a></dd>
                 <dd id="JSONPathTokenizer.COMMANDS" class="variable"><a href="tokens.html#Tokenizer.COMMANDS">COMMANDS</a></dd>
                 <dd id="JSONPathTokenizer.COMMAND_PREFIX_TOKENS" class="variable"><a href="tokens.html#Tokenizer.COMMAND_PREFIX_TOKENS">COMMAND_PREFIX_TOKENS</a></dd>
                 <dd id="JSONPathTokenizer.NUMERIC_LITERALS" class="variable"><a href="tokens.html#Tokenizer.NUMERIC_LITERALS">NUMERIC_LITERALS</a></dd>
                 <dd id="JSONPathTokenizer.COMMENTS" class="variable"><a href="tokens.html#Tokenizer.COMMENTS">COMMENTS</a></dd>
                 <dd id="JSONPathTokenizer.dialect" class="variable"><a href="tokens.html#Tokenizer.dialect">dialect</a></dd>
-                <dd id="JSONPathTokenizer.use_rs_tokenizer" class="variable"><a href="tokens.html#Tokenizer.use_rs_tokenizer">use_rs_tokenizer</a></dd>
-                <dd id="JSONPathTokenizer.reset" class="function"><a href="tokens.html#Tokenizer.reset">reset</a></dd>
                 <dd id="JSONPathTokenizer.tokenize" class="function"><a href="tokens.html#Tokenizer.tokenize">tokenize</a></dd>
-                <dd id="JSONPathTokenizer.tokenize_rs" class="function"><a href="tokens.html#Tokenizer.tokenize_rs">tokenize_rs</a></dd>
-                <dd id="JSONPathTokenizer.size" class="variable"><a href="tokens.html#Tokenizer.size">size</a></dd>
                 <dd id="JSONPathTokenizer.sql" class="variable"><a href="tokens.html#Tokenizer.sql">sql</a></dd>
+                <dd id="JSONPathTokenizer.size" class="variable"><a href="tokens.html#Tokenizer.size">size</a></dd>
                 <dd id="JSONPathTokenizer.tokens" class="variable"><a href="tokens.html#Tokenizer.tokens">tokens</a></dd>
 
             </div>
@@ -686,7 +682,7 @@
                     <div class="attr variable">
             <span class="name">ALL_JSON_PATH_PARTS</span>        =
 <input id="ALL_JSON_PATH_PARTS-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-            <label class="view-value-button pdoc-button" for="ALL_JSON_PATH_PARTS-view-value"></label><span class="default_value">{&lt;class &#39;<a href="expressions.html#JSONPathRecursive">sqlglot.expressions.JSONPathRecursive</a>&#39;&gt;, &lt;class &#39;<a href="expressions.html#JSONPathKey">sqlglot.expressions.JSONPathKey</a>&#39;&gt;, &lt;class &#39;<a href="expressions.html#JSONPathWildcard">sqlglot.expressions.JSONPathWildcard</a>&#39;&gt;, &lt;class &#39;<a href="expressions.html#JSONPathFilter">sqlglot.expressions.JSONPathFilter</a>&#39;&gt;, &lt;class &#39;<a href="expressions.html#JSONPathUnion">sqlglot.expressions.JSONPathUnion</a>&#39;&gt;, &lt;class &#39;<a href="expressions.html#JSONPathSubscript">sqlglot.expressions.JSONPathSubscript</a>&#39;&gt;, &lt;class &#39;<a href="expressions.html#JSONPathSelector">sqlglot.expressions.JSONPathSelector</a>&#39;&gt;, &lt;class &#39;<a href="expressions.html#JSONPathSlice">sqlglot.expressions.JSONPathSlice</a>&#39;&gt;, &lt;class &#39;<a href="expressions.html#JSONPathScript">sqlglot.expressions.JSONPathScript</a>&#39;&gt;, &lt;class &#39;<a href="expressions.html#JSONPathRoot">sqlglot.expressions.JSONPathRoot</a>&#39;&gt;}</span>
+            <label class="view-value-button pdoc-button" for="ALL_JSON_PATH_PARTS-view-value"></label><span class="default_value">{&lt;class &#39;<a href="expressions.html#JSONPathFilter">sqlglot.expressions.JSONPathFilter</a>&#39;&gt;, &lt;class &#39;<a href="expressions.html#JSONPathUnion">sqlglot.expressions.JSONPathUnion</a>&#39;&gt;, &lt;class &#39;<a href="expressions.html#JSONPathSubscript">sqlglot.expressions.JSONPathSubscript</a>&#39;&gt;, &lt;class &#39;<a href="expressions.html#JSONPathSelector">sqlglot.expressions.JSONPathSelector</a>&#39;&gt;, &lt;class &#39;<a href="expressions.html#JSONPathSlice">sqlglot.expressions.JSONPathSlice</a>&#39;&gt;, &lt;class &#39;<a href="expressions.html#JSONPathScript">sqlglot.expressions.JSONPathScript</a>&#39;&gt;, &lt;class &#39;<a href="expressions.html#JSONPathRoot">sqlglot.expressions.JSONPathRoot</a>&#39;&gt;, &lt;class &#39;<a href="expressions.html#JSONPathRecursive">sqlglot.expressions.JSONPathRecursive</a>&#39;&gt;, &lt;class &#39;<a href="expressions.html#JSONPathWildcard">sqlglot.expressions.JSONPathWildcard</a>&#39;&gt;, &lt;class &#39;<a href="expressions.html#JSONPathKey">sqlglot.expressions.JSONPathKey</a>&#39;&gt;}</span>
 
         
     </div>

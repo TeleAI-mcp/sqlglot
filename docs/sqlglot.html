@@ -45,6 +45,7 @@
                     <li><a href="sqlglot/diff.html">diff</a></li>
                     <li><a href="sqlglot/errors.html">errors</a></li>
                     <li><a href="sqlglot/executor.html">executor</a></li>
+                    <li><a href="sqlglot/expression_core.html">expression_core</a></li>
                     <li><a href="sqlglot/expressions.html">expressions</a></li>
                     <li><a href="sqlglot/generator.html">generator</a></li>
                     <li><a href="sqlglot/helper.html">helper</a></li>
@@ -52,10 +53,12 @@
                     <li><a href="sqlglot/lineage.html">lineage</a></li>
                     <li><a href="sqlglot/optimizer.html">optimizer</a></li>
                     <li><a href="sqlglot/parser.html">parser</a></li>
+                    <li><a href="sqlglot/parser_core.html">parser_core</a></li>
                     <li><a href="sqlglot/planner.html">planner</a></li>
                     <li><a href="sqlglot/schema.html">schema</a></li>
                     <li><a href="sqlglot/serde.html">serde</a></li>
                     <li><a href="sqlglot/time.html">time</a></li>
+                    <li><a href="sqlglot/tokenizer_core.html">tokenizer_core</a></li>
                     <li><a href="sqlglot/tokens.html">tokens</a></li>
                     <li><a href="sqlglot/transforms.html">transforms</a></li>
                     <li><a href="sqlglot/trie.html">trie</a></li>
@@ -146,10 +149,12 @@
 <p>From PyPI:</p>
 
 <div class="pdoc-code codehilite">
-<pre><span></span><code>pip3<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;sqlglot[rs]&quot;</span>
+<pre><span></span><code><span class="c1"># Pure python version</span>
+pip3<span class="w"> </span>install<span class="w"> </span>sqlglot
 
-<span class="c1"># Without Rust tokenizer (slower):</span>
-<span class="c1"># pip3 install sqlglot</span>
+<span class="c1"># C extensions compiled with mypyc</span>
+<span class="c1"># prebuilt wheel if available for your platform, otherwise builds from source</span>
+pip3<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;sqlglot[c]&quot;</span>
 </code></pre>
 </div>
 
@@ -658,10 +663,13 @@ make install-dev
 
 <h2 id="run-tests-and-lint">Run Tests and Lint</h2>
 
-<pre><code>make style  # Only linter checks
-make unit   # Only unit tests (or unit-rs, to use the Rust tokenizer)
-make test   # Unit and integration tests (or test-rs, to use the Rust tokenizer)
-make check  # Full test suite &amp; linter checks
+<pre><code>make style   # Only linter checks
+make unit    # Only unit tests (pure Python)
+make test    # Unit and integration tests (pure Python)
+make unitc   # Only unit tests (mypyc compiled)
+make testc   # Unit and integration tests (mypyc compiled)
+make check   # Full test suite &amp; linter checks
+make clean   # Remove compiled C artifacts (.so files, build dirs)
 </code></pre>
 
 <h2 id="deployment">Deployment</h2>
@@ -670,31 +678,20 @@ make check  # Full test suite &amp; linter checks
 
 <ol>
 <li>Run <code>git pull</code> to make sure the local git repo is at the head of the main branch</li>
-<li>If the Rust tokenizer code changed since the last version release:
-<ol>
-<li>Bump the <code>version</code> attribute under the <code>package</code> header in <code>sqlglotrs/Cargo.toml</code></li>
-<li>Run <code>make install-dev</code>. This will update the <code>Cargo.lock</code> file</li>
-<li>Commit the changes made to <code>Cargo.toml</code> and <code>Cargo.lock</code></li>
-</ol></li>
 <li>Do a <code>git tag</code> operation to bump the SQLGlot version, e.g. <code>git tag v28.5.0</code></li>
 <li>Run <code>git push &amp;&amp; git push --tags</code> to deploy the new version</li>
 </ol>
 
-<div class="alert important">
-<em>Important</em>
-<p>If there are any breaking changes since the last version release, make sure to deploy either a minor or major version for both sqlglot and sqlglotrs. Refer to SQLGlot's <a href="#versioning">versioning scheme</a> for more information.</p>
-</div>
-
 <h2 id="benchmarks">Benchmarks</h2>
 
-<p><a href="https://github.com/tobymao/sqlglot/blob/main/benchmarks/bench.py">Benchmarks</a> run on Python 3.10.12 in seconds.</p>
+<p><a href="https://github.com/tobymao/sqlglot/blob/main/benchmarks/parse.py">Benchmarks</a> run on Python 3.13.11 in seconds.</p>
 
 <table>
 <thead>
 <tr>
   <th>Query</th>
   <th>sqlglot</th>
-  <th>sqlglotrs</th>
+  <th>sqlglot[c]</th>
   <th>sqlfluff</th>
   <th>sqltree</th>
   <th>sqlparse</th>
@@ -705,43 +702,43 @@ make check  # Full test suite &amp; linter checks
 <tbody>
 <tr>
   <td>tpch</td>
-  <td>0.00944 (1.0)</td>
-  <td>0.00590 (0.625)</td>
-  <td>0.32116 (33.98)</td>
-  <td>0.00693 (0.734)</td>
-  <td>0.02858 (3.025)</td>
-  <td>0.03337 (3.532)</td>
-  <td>0.00073 (0.077)</td>
+  <td>0.00444 (1.0)</td>
+  <td>0.00287 (0.646)</td>
+  <td>0.25600 (57.66)</td>
+  <td>0.00242 (0.545)</td>
+  <td>0.01520 (3.423)</td>
+  <td>0.02720 (6.126)</td>
+  <td>0.00056 (0.126)</td>
 </tr>
 <tr>
   <td>short</td>
-  <td>0.00065 (1.0)</td>
-  <td>0.00044 (0.687)</td>
-  <td>0.03511 (53.82)</td>
-  <td>0.00049 (0.759)</td>
-  <td>0.00163 (2.506)</td>
-  <td>0.00234 (3.601)</td>
-  <td>0.00005 (0.073)</td>
+  <td>0.00037 (1.0)</td>
+  <td>0.00026 (0.707)</td>
+  <td>0.04200 (114.1)</td>
+  <td>0.00022 (0.587)</td>
+  <td>0.00097 (2.638)</td>
+  <td>0.00212 (5.761)</td>
+  <td>0.00004 (0.106)</td>
 </tr>
 <tr>
   <td>long</td>
-  <td>0.00889 (1.0)</td>
-  <td>0.00572 (0.643)</td>
-  <td>0.36982 (41.56)</td>
-  <td>0.00614 (0.690)</td>
-  <td>0.02530 (2.844)</td>
-  <td>0.02931 (3.294)</td>
-  <td>0.00059 (0.066)</td>
+  <td>0.00428 (1.0)</td>
+  <td>0.00268 (0.626)</td>
+  <td>0.31800 (74.30)</td>
+  <td>0.00220 (0.514)</td>
+  <td>0.01360 (3.178)</td>
+  <td>0.02660 (6.215)</td>
+  <td>0.00052 (0.121)</td>
 </tr>
 <tr>
   <td>crazy</td>
-  <td>0.02918 (1.0)</td>
-  <td>0.01991 (0.682)</td>
-  <td>1.88695 (64.66)</td>
-  <td>0.02003 (0.686)</td>
-  <td>7.46894 (255.9)</td>
-  <td>0.64994 (22.27)</td>
-  <td>0.00327 (0.112)</td>
+  <td>0.01300 (1.0)</td>
+  <td>0.00941 (0.724)</td>
+  <td>1.45000 (111.5)</td>
+  <td>0.00836 (0.643)</td>
+  <td>N/A</td>
+  <td>0.43800 (33.69)</td>
+  <td>0.00280 (0.215)</td>
 </tr>
 </tbody>
 </table>
@@ -1078,44 +1075,42 @@ make bench-optimize   # Run optimization benchmark
 </span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a>    <span class="k">else</span><span class="p">:</span>
 </span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a>        <span class="n">result</span> <span class="o">=</span> <span class="n">dialect</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">sql</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">)</span>
 </span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a>
-</span><span id="L-142"><a href="#L-142"><span class="linenos">142</span></a>    <span class="k">for</span> <span class="n">expression</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
-</span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">expression</span><span class="p">:</span>
-</span><span id="L-144"><a href="#L-144"><span class="linenos">144</span></a>            <span class="k">raise</span> <span class="n">ParseError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No expression was parsed from &#39;</span><span class="si">{</span><span class="n">sql</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
-</span><span id="L-145"><a href="#L-145"><span class="linenos">145</span></a>        <span class="k">return</span> <span class="n">expression</span>
-</span><span id="L-146"><a href="#L-146"><span class="linenos">146</span></a>    <span class="k">else</span><span class="p">:</span>
-</span><span id="L-147"><a href="#L-147"><span class="linenos">147</span></a>        <span class="k">raise</span> <span class="n">ParseError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No expression was parsed from &#39;</span><span class="si">{</span><span class="n">sql</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
-</span><span id="L-148"><a href="#L-148"><span class="linenos">148</span></a>
-</span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a>
-</span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a><span class="k">def</span><span class="w"> </span><span class="nf">transpile</span><span class="p">(</span>
-</span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a>    <span class="n">sql</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-</span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a>    <span class="n">read</span><span class="p">:</span> <span class="n">DialectType</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a>    <span class="n">write</span><span class="p">:</span> <span class="n">DialectType</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a>    <span class="n">identity</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-</span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a>    <span class="n">error_level</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">ErrorLevel</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a>    <span class="o">**</span><span class="n">opts</span><span class="p">,</span>
-</span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-</span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a><span class="sd">    Parses the given SQL string in accordance with the source dialect and returns a list of SQL strings transformed</span>
-</span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a><span class="sd">    to conform to the target dialect. Each string in the returned list represents a single transformed SQL statement.</span>
-</span><span id="L-161"><a href="#L-161"><span class="linenos">161</span></a>
-</span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a><span class="sd">    Args:</span>
-</span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a><span class="sd">        sql: the SQL code string to transpile.</span>
-</span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a><span class="sd">        read: the source dialect used to parse the input string (eg. &quot;spark&quot;, &quot;hive&quot;, &quot;presto&quot;, &quot;mysql&quot;).</span>
-</span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a><span class="sd">        write: the target dialect into which the input should be transformed (eg. &quot;spark&quot;, &quot;hive&quot;, &quot;presto&quot;, &quot;mysql&quot;).</span>
-</span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a><span class="sd">        identity: if set to `True` and if the target dialect is not specified the source dialect will be used as both:</span>
-</span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a><span class="sd">            the source and the target dialect.</span>
-</span><span id="L-168"><a href="#L-168"><span class="linenos">168</span></a><span class="sd">        error_level: the desired error level of the parser.</span>
-</span><span id="L-169"><a href="#L-169"><span class="linenos">169</span></a><span class="sd">        **opts: other `sqlglot.generator.Generator` options.</span>
-</span><span id="L-170"><a href="#L-170"><span class="linenos">170</span></a>
-</span><span id="L-171"><a href="#L-171"><span class="linenos">171</span></a><span class="sd">    Returns:</span>
-</span><span id="L-172"><a href="#L-172"><span class="linenos">172</span></a><span class="sd">        The list of transpiled SQL statements.</span>
-</span><span id="L-173"><a href="#L-173"><span class="linenos">173</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-174"><a href="#L-174"><span class="linenos">174</span></a>    <span class="n">write</span> <span class="o">=</span> <span class="p">(</span><span class="n">read</span> <span class="k">if</span> <span class="n">write</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">write</span><span class="p">)</span> <span class="k">if</span> <span class="n">identity</span> <span class="k">else</span> <span class="n">write</span>
-</span><span id="L-175"><a href="#L-175"><span class="linenos">175</span></a>    <span class="n">write</span> <span class="o">=</span> <span class="n">Dialect</span><span class="o">.</span><span class="n">get_or_raise</span><span class="p">(</span><span class="n">write</span><span class="p">)</span>
-</span><span id="L-176"><a href="#L-176"><span class="linenos">176</span></a>    <span class="k">return</span> <span class="p">[</span>
-</span><span id="L-177"><a href="#L-177"><span class="linenos">177</span></a>        <span class="n">write</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">expression</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">)</span> <span class="k">if</span> <span class="n">expression</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
-</span><span id="L-178"><a href="#L-178"><span class="linenos">178</span></a>        <span class="k">for</span> <span class="n">expression</span> <span class="ow">in</span> <span class="n">parse</span><span class="p">(</span><span class="n">sql</span><span class="p">,</span> <span class="n">read</span><span class="p">,</span> <span class="n">error_level</span><span class="o">=</span><span class="n">error_level</span><span class="p">)</span>
-</span><span id="L-179"><a href="#L-179"><span class="linenos">179</span></a>    <span class="p">]</span>
+</span><span id="L-142"><a href="#L-142"><span class="linenos">142</span></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">result</span> <span class="ow">or</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a>        <span class="k">raise</span> <span class="n">ParseError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No expression was parsed from &#39;</span><span class="si">{</span><span class="n">sql</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+</span><span id="L-144"><a href="#L-144"><span class="linenos">144</span></a>
+</span><span id="L-145"><a href="#L-145"><span class="linenos">145</span></a>    <span class="k">return</span> <span class="n">exp</span><span class="o">.</span><span class="n">Block</span><span class="p">(</span><span class="n">expressions</span><span class="o">=</span><span class="n">result</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span><span id="L-146"><a href="#L-146"><span class="linenos">146</span></a>
+</span><span id="L-147"><a href="#L-147"><span class="linenos">147</span></a>
+</span><span id="L-148"><a href="#L-148"><span class="linenos">148</span></a><span class="k">def</span><span class="w"> </span><span class="nf">transpile</span><span class="p">(</span>
+</span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a>    <span class="n">sql</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a>    <span class="n">read</span><span class="p">:</span> <span class="n">DialectType</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a>    <span class="n">write</span><span class="p">:</span> <span class="n">DialectType</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a>    <span class="n">identity</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+</span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a>    <span class="n">error_level</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">ErrorLevel</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a>    <span class="o">**</span><span class="n">opts</span><span class="p">,</span>
+</span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+</span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a><span class="sd">    Parses the given SQL string in accordance with the source dialect and returns a list of SQL strings transformed</span>
+</span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a><span class="sd">    to conform to the target dialect. Each string in the returned list represents a single transformed SQL statement.</span>
+</span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a>
+</span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a><span class="sd">    Args:</span>
+</span><span id="L-161"><a href="#L-161"><span class="linenos">161</span></a><span class="sd">        sql: the SQL code string to transpile.</span>
+</span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a><span class="sd">        read: the source dialect used to parse the input string (eg. &quot;spark&quot;, &quot;hive&quot;, &quot;presto&quot;, &quot;mysql&quot;).</span>
+</span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a><span class="sd">        write: the target dialect into which the input should be transformed (eg. &quot;spark&quot;, &quot;hive&quot;, &quot;presto&quot;, &quot;mysql&quot;).</span>
+</span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a><span class="sd">        identity: if set to `True` and if the target dialect is not specified the source dialect will be used as both:</span>
+</span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a><span class="sd">            the source and the target dialect.</span>
+</span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a><span class="sd">        error_level: the desired error level of the parser.</span>
+</span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a><span class="sd">        **opts: other `sqlglot.generator.Generator` options.</span>
+</span><span id="L-168"><a href="#L-168"><span class="linenos">168</span></a>
+</span><span id="L-169"><a href="#L-169"><span class="linenos">169</span></a><span class="sd">    Returns:</span>
+</span><span id="L-170"><a href="#L-170"><span class="linenos">170</span></a><span class="sd">        The list of transpiled SQL statements.</span>
+</span><span id="L-171"><a href="#L-171"><span class="linenos">171</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-172"><a href="#L-172"><span class="linenos">172</span></a>    <span class="n">write</span> <span class="o">=</span> <span class="p">(</span><span class="n">read</span> <span class="k">if</span> <span class="n">write</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">write</span><span class="p">)</span> <span class="k">if</span> <span class="n">identity</span> <span class="k">else</span> <span class="n">write</span>
+</span><span id="L-173"><a href="#L-173"><span class="linenos">173</span></a>    <span class="n">write</span> <span class="o">=</span> <span class="n">Dialect</span><span class="o">.</span><span class="n">get_or_raise</span><span class="p">(</span><span class="n">write</span><span class="p">)</span>
+</span><span id="L-174"><a href="#L-174"><span class="linenos">174</span></a>    <span class="k">return</span> <span class="p">[</span>
+</span><span id="L-175"><a href="#L-175"><span class="linenos">175</span></a>        <span class="n">write</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">expression</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">)</span> <span class="k">if</span> <span class="n">expression</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+</span><span id="L-176"><a href="#L-176"><span class="linenos">176</span></a>        <span class="k">for</span> <span class="n">expression</span> <span class="ow">in</span> <span class="n">parse</span><span class="p">(</span><span class="n">sql</span><span class="p">,</span> <span class="n">read</span><span class="p">,</span> <span class="n">error_level</span><span class="o">=</span><span class="n">error_level</span><span class="p">)</span>
+</span><span id="L-177"><a href="#L-177"><span class="linenos">177</span></a>    <span class="p">]</span>
 </span></pre></div>
 
 
@@ -1151,7 +1146,7 @@ make bench-optimize   # Run optimization benchmark
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">tokenize</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">sql</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">read</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n"><a href="sqlglot/dialects.html#Dialect">sqlglot.dialects.Dialect</a></span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="n"><a href="sqlglot/dialects.html#Dialect">sqlglot.dialects.Dialect</a></span><span class="p">],</span> <span class="n">NoneType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">dialect</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n"><a href="sqlglot/dialects.html#Dialect">sqlglot.dialects.Dialect</a></span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="n"><a href="sqlglot/dialects.html#Dialect">sqlglot.dialects.Dialect</a></span><span class="p">],</span> <span class="n">NoneType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></span><span class="return-annotation">) -> <span class="n">List</span><span class="p">[</span><span class="n"><a href="sqlglot/tokens.html#Token">sqlglot.tokens.Token</a></span><span class="p">]</span>:</span></span>
+        <span class="name">tokenize</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">sql</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">read</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n"><a href="sqlglot/dialects.html#Dialect">sqlglot.dialects.Dialect</a></span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="n"><a href="sqlglot/dialects.html#Dialect">sqlglot.dialects.Dialect</a></span><span class="p">],</span> <span class="n">NoneType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">dialect</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n"><a href="sqlglot/dialects.html#Dialect">sqlglot.dialects.Dialect</a></span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="n"><a href="sqlglot/dialects.html#Dialect">sqlglot.dialects.Dialect</a></span><span class="p">],</span> <span class="n">NoneType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></span><span class="return-annotation">) -> <span class="n">List</span><span class="p">[</span><span class="n"><a href="sqlglot/tokenizer_core.html#Token">sqlglot.tokenizer_core.Token</a></span><span class="p">]</span>:</span></span>
 
                 <label class="view-source-button" for="tokenize-view-source"><span>View Source</span></label>
 
@@ -1281,12 +1276,10 @@ make bench-optimize   # Run optimization benchmark
 </span><span id="parse_one-140"><a href="#parse_one-140"><span class="linenos">140</span></a>    <span class="k">else</span><span class="p">:</span>
 </span><span id="parse_one-141"><a href="#parse_one-141"><span class="linenos">141</span></a>        <span class="n">result</span> <span class="o">=</span> <span class="n">dialect</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">sql</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">)</span>
 </span><span id="parse_one-142"><a href="#parse_one-142"><span class="linenos">142</span></a>
-</span><span id="parse_one-143"><a href="#parse_one-143"><span class="linenos">143</span></a>    <span class="k">for</span> <span class="n">expression</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
-</span><span id="parse_one-144"><a href="#parse_one-144"><span class="linenos">144</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">expression</span><span class="p">:</span>
-</span><span id="parse_one-145"><a href="#parse_one-145"><span class="linenos">145</span></a>            <span class="k">raise</span> <span class="n">ParseError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No expression was parsed from &#39;</span><span class="si">{</span><span class="n">sql</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
-</span><span id="parse_one-146"><a href="#parse_one-146"><span class="linenos">146</span></a>        <span class="k">return</span> <span class="n">expression</span>
-</span><span id="parse_one-147"><a href="#parse_one-147"><span class="linenos">147</span></a>    <span class="k">else</span><span class="p">:</span>
-</span><span id="parse_one-148"><a href="#parse_one-148"><span class="linenos">148</span></a>        <span class="k">raise</span> <span class="n">ParseError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No expression was parsed from &#39;</span><span class="si">{</span><span class="n">sql</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+</span><span id="parse_one-143"><a href="#parse_one-143"><span class="linenos">143</span></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">result</span> <span class="ow">or</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="parse_one-144"><a href="#parse_one-144"><span class="linenos">144</span></a>        <span class="k">raise</span> <span class="n">ParseError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No expression was parsed from &#39;</span><span class="si">{</span><span class="n">sql</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+</span><span id="parse_one-145"><a href="#parse_one-145"><span class="linenos">145</span></a>
+</span><span id="parse_one-146"><a href="#parse_one-146"><span class="linenos">146</span></a>    <span class="k">return</span> <span class="n">exp</span><span class="o">.</span><span class="n">Block</span><span class="p">(</span><span class="n">expressions</span><span class="o">=</span><span class="n">result</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 </span></pre></div>
 
 
@@ -1322,36 +1315,36 @@ make bench-optimize   # Run optimization benchmark
 
     </div>
     <a class="headerlink" href="#transpile"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="transpile-151"><a href="#transpile-151"><span class="linenos">151</span></a><span class="k">def</span><span class="w"> </span><span class="nf">transpile</span><span class="p">(</span>
-</span><span id="transpile-152"><a href="#transpile-152"><span class="linenos">152</span></a>    <span class="n">sql</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-</span><span id="transpile-153"><a href="#transpile-153"><span class="linenos">153</span></a>    <span class="n">read</span><span class="p">:</span> <span class="n">DialectType</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="transpile-154"><a href="#transpile-154"><span class="linenos">154</span></a>    <span class="n">write</span><span class="p">:</span> <span class="n">DialectType</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="transpile-155"><a href="#transpile-155"><span class="linenos">155</span></a>    <span class="n">identity</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-</span><span id="transpile-156"><a href="#transpile-156"><span class="linenos">156</span></a>    <span class="n">error_level</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">ErrorLevel</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="transpile-157"><a href="#transpile-157"><span class="linenos">157</span></a>    <span class="o">**</span><span class="n">opts</span><span class="p">,</span>
-</span><span id="transpile-158"><a href="#transpile-158"><span class="linenos">158</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-</span><span id="transpile-159"><a href="#transpile-159"><span class="linenos">159</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="transpile-160"><a href="#transpile-160"><span class="linenos">160</span></a><span class="sd">    Parses the given SQL string in accordance with the source dialect and returns a list of SQL strings transformed</span>
-</span><span id="transpile-161"><a href="#transpile-161"><span class="linenos">161</span></a><span class="sd">    to conform to the target dialect. Each string in the returned list represents a single transformed SQL statement.</span>
-</span><span id="transpile-162"><a href="#transpile-162"><span class="linenos">162</span></a>
-</span><span id="transpile-163"><a href="#transpile-163"><span class="linenos">163</span></a><span class="sd">    Args:</span>
-</span><span id="transpile-164"><a href="#transpile-164"><span class="linenos">164</span></a><span class="sd">        sql: the SQL code string to transpile.</span>
-</span><span id="transpile-165"><a href="#transpile-165"><span class="linenos">165</span></a><span class="sd">        read: the source dialect used to parse the input string (eg. &quot;spark&quot;, &quot;hive&quot;, &quot;presto&quot;, &quot;mysql&quot;).</span>
-</span><span id="transpile-166"><a href="#transpile-166"><span class="linenos">166</span></a><span class="sd">        write: the target dialect into which the input should be transformed (eg. &quot;spark&quot;, &quot;hive&quot;, &quot;presto&quot;, &quot;mysql&quot;).</span>
-</span><span id="transpile-167"><a href="#transpile-167"><span class="linenos">167</span></a><span class="sd">        identity: if set to `True` and if the target dialect is not specified the source dialect will be used as both:</span>
-</span><span id="transpile-168"><a href="#transpile-168"><span class="linenos">168</span></a><span class="sd">            the source and the target dialect.</span>
-</span><span id="transpile-169"><a href="#transpile-169"><span class="linenos">169</span></a><span class="sd">        error_level: the desired error level of the parser.</span>
-</span><span id="transpile-170"><a href="#transpile-170"><span class="linenos">170</span></a><span class="sd">        **opts: other `sqlglot.generator.Generator` options.</span>
-</span><span id="transpile-171"><a href="#transpile-171"><span class="linenos">171</span></a>
-</span><span id="transpile-172"><a href="#transpile-172"><span class="linenos">172</span></a><span class="sd">    Returns:</span>
-</span><span id="transpile-173"><a href="#transpile-173"><span class="linenos">173</span></a><span class="sd">        The list of transpiled SQL statements.</span>
-</span><span id="transpile-174"><a href="#transpile-174"><span class="linenos">174</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="transpile-175"><a href="#transpile-175"><span class="linenos">175</span></a>    <span class="n">write</span> <span class="o">=</span> <span class="p">(</span><span class="n">read</span> <span class="k">if</span> <span class="n">write</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">write</span><span class="p">)</span> <span class="k">if</span> <span class="n">identity</span> <span class="k">else</span> <span class="n">write</span>
-</span><span id="transpile-176"><a href="#transpile-176"><span class="linenos">176</span></a>    <span class="n">write</span> <span class="o">=</span> <span class="n">Dialect</span><span class="o">.</span><span class="n">get_or_raise</span><span class="p">(</span><span class="n">write</span><span class="p">)</span>
-</span><span id="transpile-177"><a href="#transpile-177"><span class="linenos">177</span></a>    <span class="k">return</span> <span class="p">[</span>
-</span><span id="transpile-178"><a href="#transpile-178"><span class="linenos">178</span></a>        <span class="n">write</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">expression</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">)</span> <span class="k">if</span> <span class="n">expression</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
-</span><span id="transpile-179"><a href="#transpile-179"><span class="linenos">179</span></a>        <span class="k">for</span> <span class="n">expression</span> <span class="ow">in</span> <span class="n">parse</span><span class="p">(</span><span class="n">sql</span><span class="p">,</span> <span class="n">read</span><span class="p">,</span> <span class="n">error_level</span><span class="o">=</span><span class="n">error_level</span><span class="p">)</span>
-</span><span id="transpile-180"><a href="#transpile-180"><span class="linenos">180</span></a>    <span class="p">]</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="transpile-149"><a href="#transpile-149"><span class="linenos">149</span></a><span class="k">def</span><span class="w"> </span><span class="nf">transpile</span><span class="p">(</span>
+</span><span id="transpile-150"><a href="#transpile-150"><span class="linenos">150</span></a>    <span class="n">sql</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span id="transpile-151"><a href="#transpile-151"><span class="linenos">151</span></a>    <span class="n">read</span><span class="p">:</span> <span class="n">DialectType</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="transpile-152"><a href="#transpile-152"><span class="linenos">152</span></a>    <span class="n">write</span><span class="p">:</span> <span class="n">DialectType</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="transpile-153"><a href="#transpile-153"><span class="linenos">153</span></a>    <span class="n">identity</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+</span><span id="transpile-154"><a href="#transpile-154"><span class="linenos">154</span></a>    <span class="n">error_level</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">ErrorLevel</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="transpile-155"><a href="#transpile-155"><span class="linenos">155</span></a>    <span class="o">**</span><span class="n">opts</span><span class="p">,</span>
+</span><span id="transpile-156"><a href="#transpile-156"><span class="linenos">156</span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">t</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+</span><span id="transpile-157"><a href="#transpile-157"><span class="linenos">157</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="transpile-158"><a href="#transpile-158"><span class="linenos">158</span></a><span class="sd">    Parses the given SQL string in accordance with the source dialect and returns a list of SQL strings transformed</span>
+</span><span id="transpile-159"><a href="#transpile-159"><span class="linenos">159</span></a><span class="sd">    to conform to the target dialect. Each string in the returned list represents a single transformed SQL statement.</span>
+</span><span id="transpile-160"><a href="#transpile-160"><span class="linenos">160</span></a>
+</span><span id="transpile-161"><a href="#transpile-161"><span class="linenos">161</span></a><span class="sd">    Args:</span>
+</span><span id="transpile-162"><a href="#transpile-162"><span class="linenos">162</span></a><span class="sd">        sql: the SQL code string to transpile.</span>
+</span><span id="transpile-163"><a href="#transpile-163"><span class="linenos">163</span></a><span class="sd">        read: the source dialect used to parse the input string (eg. &quot;spark&quot;, &quot;hive&quot;, &quot;presto&quot;, &quot;mysql&quot;).</span>
+</span><span id="transpile-164"><a href="#transpile-164"><span class="linenos">164</span></a><span class="sd">        write: the target dialect into which the input should be transformed (eg. &quot;spark&quot;, &quot;hive&quot;, &quot;presto&quot;, &quot;mysql&quot;).</span>
+</span><span id="transpile-165"><a href="#transpile-165"><span class="linenos">165</span></a><span class="sd">        identity: if set to `True` and if the target dialect is not specified the source dialect will be used as both:</span>
+</span><span id="transpile-166"><a href="#transpile-166"><span class="linenos">166</span></a><span class="sd">            the source and the target dialect.</span>
+</span><span id="transpile-167"><a href="#transpile-167"><span class="linenos">167</span></a><span class="sd">        error_level: the desired error level of the parser.</span>
+</span><span id="transpile-168"><a href="#transpile-168"><span class="linenos">168</span></a><span class="sd">        **opts: other `sqlglot.generator.Generator` options.</span>
+</span><span id="transpile-169"><a href="#transpile-169"><span class="linenos">169</span></a>
+</span><span id="transpile-170"><a href="#transpile-170"><span class="linenos">170</span></a><span class="sd">    Returns:</span>
+</span><span id="transpile-171"><a href="#transpile-171"><span class="linenos">171</span></a><span class="sd">        The list of transpiled SQL statements.</span>
+</span><span id="transpile-172"><a href="#transpile-172"><span class="linenos">172</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="transpile-173"><a href="#transpile-173"><span class="linenos">173</span></a>    <span class="n">write</span> <span class="o">=</span> <span class="p">(</span><span class="n">read</span> <span class="k">if</span> <span class="n">write</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">write</span><span class="p">)</span> <span class="k">if</span> <span class="n">identity</span> <span class="k">else</span> <span class="n">write</span>
+</span><span id="transpile-174"><a href="#transpile-174"><span class="linenos">174</span></a>    <span class="n">write</span> <span class="o">=</span> <span class="n">Dialect</span><span class="o">.</span><span class="n">get_or_raise</span><span class="p">(</span><span class="n">write</span><span class="p">)</span>
+</span><span id="transpile-175"><a href="#transpile-175"><span class="linenos">175</span></a>    <span class="k">return</span> <span class="p">[</span>
+</span><span id="transpile-176"><a href="#transpile-176"><span class="linenos">176</span></a>        <span class="n">write</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">expression</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">opts</span><span class="p">)</span> <span class="k">if</span> <span class="n">expression</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+</span><span id="transpile-177"><a href="#transpile-177"><span class="linenos">177</span></a>        <span class="k">for</span> <span class="n">expression</span> <span class="ow">in</span> <span class="n">parse</span><span class="p">(</span><span class="n">sql</span><span class="p">,</span> <span class="n">read</span><span class="p">,</span> <span class="n">error_level</span><span class="o">=</span><span class="n">error_level</span><span class="p">)</span>
+</span><span id="transpile-178"><a href="#transpile-178"><span class="linenos">178</span></a>    <span class="p">]</span>
 </span></pre></div>
 
 
