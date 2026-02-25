@@ -6321,7 +6321,7 @@ class ArrayToString(Func):
 
 
 class ArrayIntersect(Func):
-    arg_types = {"expressions": True}
+    arg_types = {"expressions": True, "check_semantics": False}
     is_var_len_args = True
     _sql_names = ["ARRAY_INTERSECT", "ARRAY_INTERSECTION"]
 
