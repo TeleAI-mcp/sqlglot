@@ -6321,13 +6321,13 @@ class ArrayToString(Func):
 
 
 class ArrayIntersect(Func):
-    arg_types = {"expressions": True, "check_semantics": False}
+    arg_types = {"expressions": True, "is_multiset": False}
     is_var_len_args = True
     _sql_names = ["ARRAY_INTERSECT", "ARRAY_INTERSECTION"]
 
 
 class ArrayExcept(Func):
-    arg_types = {"this": True, "expression": True}
+    arg_types = {"this": True, "expression": True, "is_multiset": False}
 
 
 class StPoint(Func):
