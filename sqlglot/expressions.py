@@ -6327,7 +6327,7 @@ class ArrayIntersect(Func):
 
 
 class ArrayExcept(Func):
-    arg_types = {"this": True, "expression": True, "is_multiset": False}
+    arg_types = {"this": True, "expression": True}
 
 
 class StPoint(Func):
