@@ -1,6 +1,6 @@
-# SQLGlot
+# sqlglot
 
-SQLGlot is a SQL parser, transpiler, optimizer, and engine.
+This is a fork of the [tobymao/sqlglot](https://github.com/tobymao/sqlglot) repository.
 
 ## Related Projects
 
